@@ -43,11 +43,14 @@ def main_menu():
             style="bold bright_white",
         ))
         choice = input("Select an option: ")
-        
+
         if choice == "1":
             spam_share()
         elif choice == "2":
-            token_getter()
+            token = token_getter()
+            if token:
+                console.print(f"\n[bold green]Access Token: {token}[/bold green]")
+            input("\n[bold yellow]Press Enter to return to the main menu...[/bold yellow]")
         elif choice == "3":
             console.print("[red]Exiting...")
             break
@@ -60,7 +63,13 @@ def spam_share():
     display_banner("SPAM SHARE")
     access_token = input("Enter your access token: ")
     share_url = input("Enter your post link: ")
-    share_count = int(input("Enter Share Count: "))
+    try:
+        share_count = int(input("Enter Share Count: "))
+    except ValueError:
+        console.print("[red]Invalid number! Returning to main menu...[/red]")
+        time.sleep(2)
+        return
+
     time_interval = 0.5
     shared_count = 0
 
@@ -69,7 +78,7 @@ def spam_share():
         url = f"https://graph.facebook.com/me/feed?access_token={access_token}"
         data = {"link": share_url, "privacy": {"value": "SELF"}, "no_story": "true"}
         headers = {"User-Agent": "Mozilla/5.0"}
-        
+
         try:
             response = requests.post(url, json=data, headers=headers)
             response_data = response.json()
@@ -83,6 +92,7 @@ def spam_share():
     for _ in range(share_count):
         share_post()
         time.sleep(time_interval)
+    
     console.print("[green]Finished sharing posts.")
     input("\n[bold yellow]Press Enter to return to the main menu...[/bold yellow]")
 
@@ -91,13 +101,17 @@ def token_getter():
     display_banner("TOKEN GETTER")
     email = input("Enter your email: ")
     password = input("Enter your password: ")
-    twofactor_code = input("Enter your 2-factor authentication code (Enter '0' if not applicable): ")
+    twofactor_code = input("Enter your 2-factor authentication code (or press Enter if not applicable): ")
 
-    result = make_request(email, password, twofactor_code)
-    console.print(f"\n[bold green]Access Token: {result}[/bold green]")
-    input("\n[bold yellow]Press Enter to return to the main menu...[/bold yellow]")
+    result = make_request(email, password, twofactor_code if twofactor_code else None)
 
-def make_request(email, password, twofactor_code):
+    if result["status"]:
+        return result['data']['access_token']
+    else:
+        console.print(f"\n[bold red]Error: {result['message']}[/bold red]")
+        return None
+
+def make_request(email, password, twofactor_code=None):
     deviceID = str(uuid.uuid4())
     adid = str(uuid.uuid4())
     random_str = ''.join(random.choice(string.ascii_lowercase + "0123456789") for _ in range(24))
@@ -111,18 +125,30 @@ def make_request(email, password, twofactor_code):
         'locale': 'en_US',
         'api_key': '882a8490361da98702bf97a021ddc14d',
         'access_token': '350685531728%7C62f8ce9f74b12f84c123cc23437a4a32',
+        'generate_session_cookies': '1',
+        'credentials_type': 'password',
+        'source': 'login',
     }
+
+    if twofactor_code:
+        form["twofactor_code"] = twofactor_code
+
     form['sig'] = hashlib.md5(("".join(f"{k}={form[k]}" for k in sorted(form)) + '62f8ce9f74b12f84c123cc23437a4a32').encode()).hexdigest()
-    headers = { 'content-type': 'application/x-www-form-urlencoded' }
+
+    headers = {'content-type': 'application/x-www-form-urlencoded'}
     url = 'https://b-graph.facebook.com/auth/login'
-    
+
     try:
         response = requests.post(url, data=form, headers=headers)
         response_json = response.json()
-        return response_json.get("access_token", "Failed to retrieve access token")
+
+        if response.status_code == 200 and "access_token" in response_json:
+            return {"status": True, "message": "Login successful!", "data": response_json}
+
+        return {"status": False, "message": response_json.get("error", {}).get("message", "Login failed!")}
 
     except Exception as e:
-        return "Error: Please check your account and password again!"
+        return {"status": False, "message": f"Error: {str(e)}"}
 
 if __name__ == '__main__':
     main_menu()
