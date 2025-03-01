@@ -59,21 +59,18 @@ def spam_share():
     clear_screen()
     display_banner("SPAM SHARE")
 
-    # Ensure valid token input
     access_token = input("Enter your access token: ").strip()
     if not access_token:
         console.print("[red]Access token cannot be empty!")
         time.sleep(2)
         return
 
-    # Ensure valid link input
     share_url = input("Enter your post link: ").strip()
     if not share_url:
         console.print("[red]Post link cannot be empty!")
         time.sleep(2)
         return
 
-    # Ensure valid share count
     try:
         share_count = int(input("Enter Share Count: ").strip())
         if share_count <= 0:
