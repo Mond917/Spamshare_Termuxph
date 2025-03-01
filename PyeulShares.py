@@ -42,15 +42,12 @@ def main_menu():
             width=65,
             style="bold bright_white",
         ))
-        choice = input("Select an option: ")
-
+        choice = input("Select an option: ").strip()
+        
         if choice == "1":
             spam_share()
         elif choice == "2":
-            token = token_getter()
-            if token:
-                console.print(f"\n[bold green]Access Token: {token}[/bold green]")
-            input("\n[bold yellow]Press Enter to return to the main menu...[/bold yellow]")
+            token_getter()
         elif choice == "3":
             console.print("[red]Exiting...")
             break
@@ -61,12 +58,28 @@ def main_menu():
 def spam_share():
     clear_screen()
     display_banner("SPAM SHARE")
-    access_token = input("Enter your access token: ")
-    share_url = input("Enter your post link: ")
+
+    # Ensure valid token input
+    access_token = input("Enter your access token: ").strip()
+    if not access_token:
+        console.print("[red]Access token cannot be empty!")
+        time.sleep(2)
+        return
+
+    # Ensure valid link input
+    share_url = input("Enter your post link: ").strip()
+    if not share_url:
+        console.print("[red]Post link cannot be empty!")
+        time.sleep(2)
+        return
+
+    # Ensure valid share count
     try:
-        share_count = int(input("Enter Share Count: "))
+        share_count = int(input("Enter Share Count: ").strip())
+        if share_count <= 0:
+            raise ValueError
     except ValueError:
-        console.print("[red]Invalid number! Returning to main menu...[/red]")
+        console.print("[red]Invalid number! Enter a positive integer.")
         time.sleep(2)
         return
 
@@ -78,7 +91,7 @@ def spam_share():
         url = f"https://graph.facebook.com/me/feed?access_token={access_token}"
         data = {"link": share_url, "privacy": {"value": "SELF"}, "no_story": "true"}
         headers = {"User-Agent": "Mozilla/5.0"}
-
+        
         try:
             response = requests.post(url, json=data, headers=headers)
             response_data = response.json()
@@ -92,24 +105,36 @@ def spam_share():
     for _ in range(share_count):
         share_post()
         time.sleep(time_interval)
-    
+
     console.print("[green]Finished sharing posts.")
     input("\n[bold yellow]Press Enter to return to the main menu...[/bold yellow]")
 
 def token_getter():
     clear_screen()
     display_banner("TOKEN GETTER")
-    email = input("Enter your email: ")
-    password = input("Enter your password: ")
-    twofactor_code = input("Enter your 2-factor authentication code (or press Enter if not applicable): ")
+
+    email = input("Enter your email: ").strip()
+    if not email:
+        console.print("[red]Email cannot be empty!")
+        time.sleep(2)
+        return
+
+    password = input("Enter your password: ").strip()
+    if not password:
+        console.print("[red]Password cannot be empty!")
+        time.sleep(2)
+        return
+
+    twofactor_code = input("Enter your 2-factor authentication code (or press Enter if not applicable): ").strip()
 
     result = make_request(email, password, twofactor_code if twofactor_code else None)
 
     if result["status"]:
-        return result['data']['access_token']
+        console.print(f"\n[bold green]Access Token: {result['data']['access_token']}[/bold green]")
     else:
         console.print(f"\n[bold red]Error: {result['message']}[/bold red]")
-        return None
+
+    input("\n[bold yellow]Press Enter to return to the main menu...[/bold yellow]")
 
 def make_request(email, password, twofactor_code=None):
     deviceID = str(uuid.uuid4())
@@ -125,19 +150,16 @@ def make_request(email, password, twofactor_code=None):
         'locale': 'en_US',
         'api_key': '882a8490361da98702bf97a021ddc14d',
         'access_token': '350685531728%7C62f8ce9f74b12f84c123cc23437a4a32',
-        'generate_session_cookies': '1',
-        'credentials_type': 'password',
-        'source': 'login',
     }
-
+    
     if twofactor_code:
         form["twofactor_code"] = twofactor_code
-
+    
     form['sig'] = hashlib.md5(("".join(f"{k}={form[k]}" for k in sorted(form)) + '62f8ce9f74b12f84c123cc23437a4a32').encode()).hexdigest()
-
-    headers = {'content-type': 'application/x-www-form-urlencoded'}
+    
+    headers = { 'content-type': 'application/x-www-form-urlencoded' }
     url = 'https://b-graph.facebook.com/auth/login'
-
+    
     try:
         response = requests.post(url, data=form, headers=headers)
         response_json = response.json()
