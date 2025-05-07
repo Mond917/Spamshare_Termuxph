@@ -19,8 +19,10 @@ def clear_screen():
 def display_banner(title):
     console.print(Panel(
         f"""
-Maker : Jaxon Vaughn
-Info : Paid tools
+[ blue ]Maker : Jaxon Vaughn
+[ blue ]Info  : Paid tools
+[ red ]Note  : if i see you sharing my tools i will down this spamsharer
+
         """,
         title=f"[green]●[yellow] {title} [/]",
         width=65,
@@ -55,7 +57,7 @@ def main_menu():
 
 def spam_share():
     clear_screen()
-    display_banner("SPAM SHARE")
+    display_banner("CYBER SPAMSHARER")
 
     access_token = input("Enter your access token: ").strip()
     if not access_token:
