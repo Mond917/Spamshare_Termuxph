@@ -19,11 +19,17 @@ def clear_screen():
 def display_banner(title):
     console.print(Panel(
         f"""
-Maker : Jaxon Vaughn
-Info  : Cyber Spam Tools
-Contact us : fb.com/jaxonvaughnrpw 
-Version : 2.4
-Status :[green]ACTIVE
+[blue]INFORMATION :
+Maker   : Jaxon Vaughn
+Tool    : Cyber Spam Tools 
+Status  : [green]ACTIVE
+
+[blue]REACH US : 
+facebook : fb.com/jaxonvaughnrpw
+email    : selleraccph@gmail.com
+
+[violet]TOOLS Version : [green]2.4
+
         """,
         title=f"[green]●[yellow] {title} [/]",
         width=65,
