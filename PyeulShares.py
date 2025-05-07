@@ -20,8 +20,8 @@ def display_banner(title):
     console.print(Panel(
         f"""
 Maker : Jaxon Vaughn
-Info  : Paid tools
-Note  : if i see you sharing my tools i will down this spamsharer
+Info  : Paid tools 
+Contact us : fb.com/jaxonvaughnrpw 
 
         """,
         title=f"[green]●[yellow] {title} [/]",
@@ -108,7 +108,7 @@ def spam_share():
 
 def token_getter():
     clear_screen()
-    display_banner("TOKEN GETTER")
+    display_banner("CYBER TOKEN GETTER")
 
     email = input("Enter your email: ").strip()
     if not email:
