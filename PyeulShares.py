@@ -19,9 +19,9 @@ def clear_screen():
 def display_banner(title):
     console.print(Panel(
         f"""
-[ blue ]Maker : Jaxon Vaughn
-[ blue ]Info  : Paid tools
-[ red ]Note  : if i see you sharing my tools i will down this spamsharer
+Maker : Jaxon Vaughn
+Info  : Paid tools
+Note  : if i see you sharing my tools i will down this spamsharer
 
         """,
         title=f"[green]●[yellow] {title} [/]",
@@ -32,7 +32,7 @@ def display_banner(title):
 def main_menu():
     while True:
         clear_screen()
-        display_banner("FACEBOOK TOOL")
+        display_banner("CYBER TOOL")
         console.print(Panel(
             """
 [green]1. Spam Share
