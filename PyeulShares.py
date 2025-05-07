@@ -19,10 +19,8 @@ def clear_screen():
 def display_banner(title):
     console.print(Panel(
         f"""
-█████ █   █ ████ █   █  █       █████ █   █     █    ████  ████   █████  
-█    █ █  █ █    █   █  █       █     █████    █ █   █   █ █      █ 
-█████   █   ██   █   █  █        ██   █   █   █   █  ███   ██      ███ 
-█      █    ███   ███   ████   ████   █   █  █     █ █  █  ████  █████ 
+Maker : Jaxon Vaughn
+Info : Paid tools
         """,
         title=f"[green]●[yellow] {title} [/]",
         width=65,
