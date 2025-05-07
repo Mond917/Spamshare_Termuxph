@@ -1,6 +1,6 @@
-git clone https://github.com/Lucifurge/Spamshare_Termux.git
+git clone https://github.com/Lucifurge/Spamshare_Termuxph.git
 
-cd Spamshare_Termux
+cd Spamshare_Termuxph
 
  pip install requests colorama rich
 
